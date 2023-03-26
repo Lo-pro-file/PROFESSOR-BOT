@@ -25,12 +25,12 @@ async def temp_ban_user(_, message):
     is_admin = await admin_check(message)
     if not is_admin:
         return
-    if not len(message.command) > 1:
+    if len(message.command) <= 1:
         return
     user_id, user_first_name = extract_user(message)
     until_date_val = extract_time(message.command[1])
     if until_date_val is None:
-        return await message.reply_text(text=f"Invalid time type specified. \nExpected m, h, or d, Got it: {message.command[1][-1]}")   
+        return await message.reply_text(text=f"Invalid time type specified. \nExpected m, h, or d, Got it: {message.command[1][-1]}")
     try:
         await message.chat.ban_member(user_id=user_id, until_date=until_date_val)            
     except Exception as error:

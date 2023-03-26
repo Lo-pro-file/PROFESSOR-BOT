@@ -45,11 +45,10 @@ async def photo(client: Client, message: Message):
             reply_to_message_id=message.id,
         )
     except Exception as e:
-        print("photomarkup error - " + str(e))
+        print(f"photomarkup error - {str(e)}")
         if "USER_IS_BLOCKED" in str(e):
             return
-        else:
-            try:
-                await message.reply_text(f"{e} \nSomething went wrong!", quote=True)
-            except Exception:
-                return
+        try:
+            await message.reply_text(f"{e} \nSomething went wrong!", quote=True)
+        except Exception:
+            return

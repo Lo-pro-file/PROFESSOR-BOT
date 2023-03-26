@@ -46,18 +46,43 @@ async def next_page(bot, query):
         return
     settings = await get_settings(query.message.chat.id)
     nxreq  = query.from_user.id if query.from_user else 0
-    if SHORT_URL and SHORT_API:          
-        if settings["button"]:
-            btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", url=await get_shortlink(f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"))] for file in files ]
-        else:
-            btn = [[InlineKeyboardButton(text=f"{file.file_name}", url=await get_shortlink(f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}")),
-                    InlineKeyboardButton(text=f"{get_size(file.file_size)}", url=await get_shortlink(f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"))] for file in files ]
-    else:        
-        if settings["button"]:
-            btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", callback_data=f'files#{nxreq}#{file.file_id}')] for file in files ]
-        else:
-            btn = [[InlineKeyboardButton(text=f"{file.file_name}", callback_data=f'files#{nxreq}#{file.file_id}'),
-                    InlineKeyboardButton(text=f"{get_size(file.file_size)}", callback_data=f'files#{nxreq}#{file.file_id}')] for file in files ]
+    if SHORT_URL and SHORT_API:      
+        btn = (
+            [
+                [
+                    InlineKeyboardButton(
+                        text=f"[{get_size(file.file_size)}] {file.file_name}",
+                        url=await get_shortlink(
+                            f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"
+                        ),
+                    )
+                ]
+                for file in files
+            ]
+            if settings["button"]
+            else [
+                [
+                    InlineKeyboardButton(
+                        text=f"{file.file_name}",
+                        url=await get_shortlink(
+                            f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"
+                        ),
+                    ),
+                    InlineKeyboardButton(
+                        text=f"{get_size(file.file_size)}",
+                        url=await get_shortlink(
+                            f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"
+                        ),
+                    ),
+                ]
+                for file in files
+            ]
+        )
+    elif settings["button"]:
+        btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", callback_data=f'files#{nxreq}#{file.file_id}')] for file in files ]
+    else:
+        btn = [[InlineKeyboardButton(text=f"{file.file_name}", callback_data=f'files#{nxreq}#{file.file_id}'),
+                InlineKeyboardButton(text=f"{get_size(file.file_size)}", callback_data=f'files#{nxreq}#{file.file_id}')] for file in files ]
 
     if 0 < offset <= 10:
         off_set = 0
@@ -67,21 +92,42 @@ async def next_page(bot, query):
         off_set = offset - 10
     if n_offset == 0:
         btn.append(
-            [InlineKeyboardButton("⏪ BACK", callback_data=f"next_{req}_{key}_{off_set}"),
-             InlineKeyboardButton(f"📃 Pages {math.ceil(int(offset) / 10) + 1} / {math.ceil(total / 10)}",
-                                  callback_data="pages")]
+            [
+                InlineKeyboardButton(
+                    "⏪ BACK", callback_data=f"next_{req}_{key}_{off_set}"
+                ),
+                InlineKeyboardButton(
+                    f"📃 Pages {math.ceil(offset / 10) + 1} / {math.ceil(total / 10)}",
+                    callback_data="pages",
+                ),
+            ]
         )
     elif off_set is None:
         btn.append(
-            [InlineKeyboardButton(f"🗓 {math.ceil(int(offset) / 10) + 1} / {math.ceil(total / 10)}", callback_data="pages"),
-             InlineKeyboardButton("NEXT ⏩", callback_data=f"next_{req}_{key}_{n_offset}")])
+            [
+                InlineKeyboardButton(
+                    f"🗓 {math.ceil(offset / 10) + 1} / {math.ceil(total / 10)}",
+                    callback_data="pages",
+                ),
+                InlineKeyboardButton(
+                    "NEXT ⏩", callback_data=f"next_{req}_{key}_{n_offset}"
+                ),
+            ]
+        )
     else:
         btn.append(
             [
-                InlineKeyboardButton("⏪ BACK", callback_data=f"next_{req}_{key}_{off_set}"),
-                InlineKeyboardButton(f"🗓 {math.ceil(int(offset) / 10) + 1} / {math.ceil(total / 10)}", callback_data="pages"),
-                InlineKeyboardButton("NEXT ⏩", callback_data=f"next_{req}_{key}_{n_offset}")
-            ],
+                InlineKeyboardButton(
+                    "⏪ BACK", callback_data=f"next_{req}_{key}_{off_set}"
+                ),
+                InlineKeyboardButton(
+                    f"🗓 {math.ceil(offset / 10) + 1} / {math.ceil(total / 10)}",
+                    callback_data="pages",
+                ),
+                InlineKeyboardButton(
+                    "NEXT ⏩", callback_data=f"next_{req}_{key}_{n_offset}"
+                ),
+            ]
         )
     try:
         await query.edit_message_reply_markup(
@@ -135,19 +181,44 @@ async def pm_next_page(bot, query):
 
     if not files:
         return
-    
-    if SHORT_URL and SHORT_API:          
-        if SINGLE_BUTTON:
-            btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", url=await get_shortlink(f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"))] for file in files ]
-        else:
-            btn = [[InlineKeyboardButton(text=f"{file.file_name}", url=await get_shortlink(f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}")),
-                    InlineKeyboardButton(text=f"{get_size(file.file_size)}", url=await get_shortlink(f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"))] for file in files ]
-    else:        
-        if SINGLE_BUTTON:
-            btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", callback_data=f'pmfile#{file.file_id}')] for file in files ]
-        else:
-            btn = [[InlineKeyboardButton(text=f"{file.file_name}", callback_data=f'pmfile#{file.file_id}'),
-                    InlineKeyboardButton(text=f"{get_size(file.file_size)}", callback_data=f'pmfile#{file.file_id}')] for file in files ]
+
+    if SHORT_URL and SHORT_API:      
+        btn = (
+            [
+                [
+                    InlineKeyboardButton(
+                        text=f"[{get_size(file.file_size)}] {file.file_name}",
+                        url=await get_shortlink(
+                            f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"
+                        ),
+                    )
+                ]
+                for file in files
+            ]
+            if SINGLE_BUTTON
+            else [
+                [
+                    InlineKeyboardButton(
+                        text=f"{file.file_name}",
+                        url=await get_shortlink(
+                            f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"
+                        ),
+                    ),
+                    InlineKeyboardButton(
+                        text=f"{get_size(file.file_size)}",
+                        url=await get_shortlink(
+                            f"https://telegram.dog/{temp.U_NAME}?start=files_{file.file_id}"
+                        ),
+                    ),
+                ]
+                for file in files
+            ]
+        )
+    elif SINGLE_BUTTON:
+        btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", callback_data=f'pmfile#{file.file_id}')] for file in files ]
+    else:
+        btn = [[InlineKeyboardButton(text=f"{file.file_name}", callback_data=f'pmfile#{file.file_id}'),
+                InlineKeyboardButton(text=f"{get_size(file.file_size)}", callback_data=f'pmfile#{file.file_id}')] for file in files ]
 
     if 0 < offset <= 10:
         off_set = 0
@@ -157,20 +228,42 @@ async def pm_next_page(bot, query):
         off_set = offset - 10
     if n_offset == 0:
         btn.append(
-            [InlineKeyboardButton("⏪ BACK", callback_data=f"pmnext_{req}_{key}_{off_set}"),
-             InlineKeyboardButton(f"📃 Pages {math.ceil(int(offset) / 10) + 1} / {math.ceil(total / 10)}", callback_data="pages")]                                  
+            [
+                InlineKeyboardButton(
+                    "⏪ BACK", callback_data=f"pmnext_{req}_{key}_{off_set}"
+                ),
+                InlineKeyboardButton(
+                    f"📃 Pages {math.ceil(offset / 10) + 1} / {math.ceil(total / 10)}",
+                    callback_data="pages",
+                ),
+            ]
         )
     elif off_set is None:
         btn.append(
-            [InlineKeyboardButton(f"🗓 {math.ceil(int(offset) / 10) + 1} / {math.ceil(total / 10)}", callback_data="pages"),
-             InlineKeyboardButton("NEXT ⏩", callback_data=f"pmnext_{req}_{key}_{n_offset}")])
+            [
+                InlineKeyboardButton(
+                    f"🗓 {math.ceil(offset / 10) + 1} / {math.ceil(total / 10)}",
+                    callback_data="pages",
+                ),
+                InlineKeyboardButton(
+                    "NEXT ⏩", callback_data=f"pmnext_{req}_{key}_{n_offset}"
+                ),
+            ]
+        )
     else:
         btn.append(
             [
-                InlineKeyboardButton("⏪ BACK", callback_data=f"pmnext_{req}_{key}_{off_set}"),
-                InlineKeyboardButton(f"🗓 {math.ceil(int(offset) / 10) + 1} / {math.ceil(total / 10)}", callback_data="pages"),
-                InlineKeyboardButton("NEXT ⏩", callback_data=f"pmnext_{req}_{key}_{n_offset}")
-            ],
+                InlineKeyboardButton(
+                    "⏪ BACK", callback_data=f"pmnext_{req}_{key}_{off_set}"
+                ),
+                InlineKeyboardButton(
+                    f"🗓 {math.ceil(offset / 10) + 1} / {math.ceil(total / 10)}",
+                    callback_data="pages",
+                ),
+                InlineKeyboardButton(
+                    "NEXT ⏩", callback_data=f"pmnext_{req}_{key}_{n_offset}"
+                ),
+            ]
         )
     try:
         await query.edit_message_reply_markup(

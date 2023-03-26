@@ -7,12 +7,8 @@ async def jsonify(_, message):
     the_real_message = None
     reply_to_id = None
     pk = InlineKeyboardMarkup([[InlineKeyboardButton(text="𝙲𝙻𝙾𝚂𝙴", callback_data="close_data")]])  
-                
-    if message.reply_to_message:
-        the_real_message = message.reply_to_message
-    else:
-        the_real_message = message
 
+    the_real_message = message.reply_to_message or message
     try:        
         await message.reply_text(f"<code>{the_real_message}</code>", reply_markup=pk, quote=True)
     except Exception as e:

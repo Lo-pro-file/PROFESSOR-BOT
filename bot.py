@@ -41,7 +41,7 @@ class Bot(Client):
     async def start(self):
         b_users, b_chats = await db.get_banned()
         temp.BANNED_USERS = b_users
-        temp.BANNED_CHATS = b_chats        
+        temp.BANNED_CHATS = b_chats
         await super().start()
         await Media.ensure_indexes()
         me = await self.get_me()
@@ -49,7 +49,7 @@ class Bot(Client):
         temp.U_NAME = me.username
         temp.B_NAME = me.first_name
         temp.B_LINK = me.mention
-        self.username = '@' + me.username
+        self.username = f'@{me.username}'
         curr = datetime.now(timezone(TIMEZONE))
         date = curr.strftime('%d %B, %Y')
         time = curr.strftime('%I:%M:%S %p')
