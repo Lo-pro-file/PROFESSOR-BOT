@@ -54,10 +54,16 @@ async def save_file(media):
         try:
             await file.commit()
         except DuplicateKeyError:      
-            logger.warning(str(getattr(media, "file_name", "NO FILE NAME")) + " is already saved in database")
+            logger.warning(
+                getattr(media, "file_name", "NO FILE NAME")
+                + " is already saved in database"
+            )
             return False, 0
         else:
-            logger.info(str(getattr(media, "file_name", "NO FILE NAME")) + " is saved in database")
+            logger.info(
+                getattr(media, "file_name", "NO FILE NAME")
+                + " is saved in database"
+            )
             return True, 1
 
 
@@ -111,8 +117,7 @@ async def get_search_results(query, file_type=None, max_results=(MAX_RIST_BTNS),
 async def get_file_details(query):
     filter = {'file_id': query}
     cursor = Media.find(filter)
-    filedetails = await cursor.to_list(length=1)
-    return filedetails
+    return await cursor.to_list(length=1)
 
 
 def encode_file_id(s: bytes) -> str:

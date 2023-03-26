@@ -122,18 +122,17 @@ async def junk_clear_group(bot, message):
     failed = ""
     deleted = 0
     async for group in groups:
-        pti, sh, ex = await junk_group(int(group['id']), b_msg)        
-        if pti == False:
-            if sh == "deleted":
-                deleted+=1 
-                failed += ex 
-                try:
-                    await bot.leave_chat(int(group['id']))
-                except Exception as e:
-                    print(f"{e} > {group['id']}")  
+        pti, sh, ex = await junk_group(int(group['id']), b_msg)
+        if pti == False and sh == "deleted":
+            deleted+=1
+            failed += ex
+            try:
+                await bot.leave_chat(int(group['id']))
+            except Exception as e:
+                print(f"{e} > {group['id']}")
         done += 1
         if not done % 20:
-            await sts.edit(f"in progress:\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nDeleted: {deleted}")    
+            await sts.edit(f"in progress:\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nDeleted: {deleted}")
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.delete()
     try:

@@ -11,31 +11,29 @@ from yt_dlp import YoutubeDL
 
 @Client.on_message(filters.command(['song', 'mp3']) & filters.private)
 async def song(client, message):
-    user_id = message.from_user.id 
-    user_name = message.from_user.first_name 
-    rpk = "["+user_name+"](tg://user?id="+str(user_id)+")"
-    query = ''
-    for i in message.command[1:]:
-        query += ' ' + str(i)
+    user_id = message.from_user.id
+    user_name = message.from_user.first_name
+    rpk = f"[{user_name}](tg://user?id={str(user_id)})"
+    query = ''.join(f' {str(i)}' for i in message.command[1:])
     print(query)
     m = await message.reply(f"**ѕєαrchíng чσur ѕσng...!\n {query}**")
     ydl_opts = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]       
+        title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
         thumb_name = f'thumb{title}.jpg'
         thumb = requests.get(thumbnail, allow_redirects=True)
         open(thumb_name, 'wb').write(thumb.content)
-        performer = f"[Mᴋɴ Bᴏᴛᴢ™]" 
+        performer = "[Mᴋɴ Bᴏᴛᴢ™]"
         duration = results[0]["duration"]
         url_suffix = results[0]["url_suffix"]
         views = results[0]["views"]
     except Exception as e:
-        print(str(e))
+        print(e)
         return await m.edit("**𝙵𝙾𝚄𝙽𝙳 𝙽𝙾𝚃𝙷𝙸𝙽𝙶 𝙿𝙻𝙴𝙰𝚂𝙴 𝙲𝙾𝚁𝚁𝙴𝙲𝚃 𝚃𝙷𝙴 𝚂𝙿𝙴𝙻𝙻𝙸𝙽𝙶 𝙾𝚁 𝙲𝙷𝙴𝙲𝙺 𝚃𝙷𝙴 𝙻𝙸𝙽𝙺**")
-                
+
     await m.edit("**dσwnlσαdíng чσur ѕσng...!**")
     try:
         with YoutubeDL(ydl_opts) as ydl:

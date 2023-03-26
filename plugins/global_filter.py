@@ -42,8 +42,7 @@ async def addgfilter(client, message):
         try:
             rm = message.reply_to_message.reply_markup
             btn = rm.inline_keyboard
-            msg = get_file_id(message.reply_to_message)
-            if msg:
+            if msg := get_file_id(message.reply_to_message):
                 fileid = msg.file_id
                 reply_text = message.reply_to_message.caption.html
             else:
@@ -93,7 +92,7 @@ async def get_all_gfilters(client, message):
         gfilterlist = f"Total number of gfilters : {count}\n\n"
 
         for text in texts:
-            keywords = " ×  `{}`\n".format(text)
+            keywords = f" ×  `{text}`\n"
 
             gfilterlist += keywords
 
@@ -106,7 +105,7 @@ async def get_all_gfilters(client, message):
                 )
             return
     else:
-        gfilterlist = f"There are no active gfilters."
+        gfilterlist = "There are no active gfilters."
 
     await message.reply_text(
         text=gfilterlist,
@@ -135,13 +134,19 @@ async def deletegfilter(client, message):
 @Client.on_message(filters.command('delallg') & filters.user(ADMINS))
 async def delallgfill(client, message):
     await message.reply_text(
-            f"Do you want to continue??",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(text="YES",callback_data="gconforme")],
-                [InlineKeyboardButton(text="CANCEL",callback_data="close_data")]
-            ]),
-            quote=True
-        )
+        "Do you want to continue??",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="YES", callback_data="gconforme")],
+                [
+                    InlineKeyboardButton(
+                        text="CANCEL", callback_data="close_data"
+                    )
+                ],
+            ]
+        ),
+        quote=True,
+    )
 
 
 @Client.on_callback_query(filters.regex("gconforme"))
